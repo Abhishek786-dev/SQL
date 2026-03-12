@@ -148,3 +148,91 @@ SELECT
 FROM patients
 ORDER BY first_name DESC;
 EX: SMITH,jane
+
+-- 11. 
+-- Show the province_id(s), sum of height; where the total sum of its patient's height is greater than or equal to 7,000.
+
+SELECT
+  province_id,
+  SUM(height) AS sum_height
+FROM patients
+GROUP BY province_id
+HAVING sum_height >= 7000
+
+-- OR
+
+select *
+from (
+    select
+      province_id,
+      SUM(height) as sum_height
+    FROM patients
+    group by province_id
+  )
+where sum_height >= 7000;
+
+-- 12.
+-- Show the difference between the largest weight and smallest weight for patients with the last name 'Maroni'
+
+SELECT
+  (MAX(weight) - MIN(weight)) AS weight_delta
+FROM patients
+WHERE last_name = 'Maroni';
+
+-- 13.
+-- Show all of the days of the month (1-31) and how many admission_dates occurred on that day. Sort by the day with most admissions to least admissions.
+
+SELECT
+  DAY(admission_date) AS day_number,
+  COUNT(*) AS number_of_admissions
+FROM admissions
+GROUP BY day_number
+ORDER BY number_of_admissions DESC
+
+14.
+-- Show all columns for patient_id 542's most recent admission_date.
+
+SELECT *
+FROM admissions
+WHERE patient_id = 542
+GROUP BY patient_id
+HAVING
+  admission_date = MAX(admission_date);
+
+-- OR
+
+SELECT *
+FROM admissions
+WHERE patient_id = 542
+ORDER BY admission_date DESC
+LIMIT 1
+
+-- OR
+  
+SELECT *
+FROM admissions
+GROUP BY patient_id
+HAVING
+  patient_id = 542
+  AND max(admission_date)
+
+-- 15. 
+-- Show patient_id, attending_doctor_id, and diagnosis for admissions that match one of the two criteria:
+-- 1. patient_id is an odd number and attending_doctor_id is either 1, 5, or 19.
+-- 2. attending_doctor_id contains a 2 and the length of patient_id is 3 characters.
+
+SELECT
+  patient_id,
+  attending_doctor_id,
+  diagnosis
+FROM admissions
+WHERE
+  (
+    attending_doctor_id IN (1, 5, 19)
+    AND patient_id % 2 != 0
+  )
+  OR 
+  (
+    attending_doctor_id LIKE '%2%'
+    AND len(patient_id) = 3
+  )
