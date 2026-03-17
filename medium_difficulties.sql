@@ -236,3 +236,38 @@ WHERE
     attending_doctor_id LIKE '%2%'
     AND len(patient_id) = 3
   )
+  
+-- 16.
+-- Show first_name, last_name, and the total number of admissions attended for each doctor.
+-- Every admission has been attended by a doctor.
+
+SELECT
+  first_name,
+  last_name,
+  count(*) as admissions_total
+from admissions a
+  join doctors ph on ph.doctor_id = a.attending_doctor_id
+group by attending_doctor_id
+
+-- OR
+SELECT
+  first_name,
+  last_name,
+  count(*)
+from
+  doctors p,
+  admissions a
+where
+  a.attending_doctor_id = p.doctor_id
+group by p.doctor_id;
+
+-- 17
+-- For each doctor, display their id, full name, and the first and last admission date they attended.
+select
+  doctor_id,
+  first_name || ' ' || last_name as full_name,
+  min(admission_date) as first_admission_date,
+  max(admission_date) as last_admission_date
+from admissions a
+  join doctors ph on a.attending_doctor_id = ph.doctor_id
+group by doctor_id;
